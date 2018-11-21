@@ -11,3 +11,8 @@ In this repo, Tatstiana Kulakevich and Hector Bahamonde (O'Higgins University, C
 - Tatsiana Kulakevich
   * ?
   * ?
+
+# Disclaimer
+
+- We thank Mart Trasberg @ Tulane for sharing the data with us. 
+
