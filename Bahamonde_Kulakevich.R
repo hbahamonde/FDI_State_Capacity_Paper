@@ -463,7 +463,7 @@ completeFun <- function(data, desiredCols) {
         return(data[completeVec, ])
 }
 
-df.complete.model.1 = completeFun(df, c("iso.Alpha3", "diff.gini_disp.mean", "lag.gini_disp.mean", "lag.polity", "lag.cum.census", "lag.wdi.gdp", "diff.wdi.gdp", "lag.wdi.InflationGdp", "diff.wdi.InflationGdp", "lag.wdi.ForeignDirect", "diff.wdi.ForeignDirect", "lag.wdi.TradeOfGdp", "diff.wdi.TradeOfGdp", "lag.wdi.AgricultureVa", "diff.wdi.AgricultureVa", "lag.wdi.PopulationAges", "diff.wdi.PopulationAges", "lag.wdi.UrbanPopulatio", "diff.wdi.UrbanPopulatio", "country", "year"))
+df.complete.model.1 = completeFun(df, c("iso.Alpha3", "diff.wdi.ForeignDirect", "lag.wdi.ForeignDirect", "lag.wdi.AgricultureVa", "lag.cum.census", "lag.wdi.Manufacturing", "lag.cum.census", "lag.polity", "diff.polity",  "lag.wdi.InflationGdp", "diff.wdi.InflationGdp", "lag.wdi.PopulationAges", "diff.wdi.PopulationAges", "lag.wdi.UrbanPopulatio", "diff.wdi.UrbanPopulatio", "country","year"))
 
 
 # save dataset
@@ -490,3 +490,26 @@ load("../FDI_State_Capacity_Paper/df.RData")
 ########################################
 ######  MAIN MODELS
 ########################################
+
+# Model 1
+options(scipen=9999999)
+model.1 = lm(diff.wdi.ForeignDirect ~ 
+                     lag.wdi.ForeignDirect +
+                     lag.wdi.AgricultureVa * lag.cum.census +
+                     lag.wdi.Manufacturing * lag.cum.census +
+                     # Political Controls
+                     lag.polity + diff.polity +
+                     # Economic Controls
+                     lag.wdi.InflationGdp + diff.wdi.InflationGdp + 
+                     lag.wdi.PopulationAges + diff.wdi.PopulationAges +
+                     # Demographic Controls
+                     lag.wdi.UrbanPopulatio + diff.wdi.UrbanPopulatio + 
+                     # Fixed Effects
+                     factor(country) +  
+                     factor(year),
+             data = df)
+
+# summary(model.1)
+
+
+## Computing Conditional Effects
