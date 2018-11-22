@@ -382,6 +382,10 @@ p.df$lag.fraser_econ_fred_sum = lag(p.df$fraser_econ_fred_sum, k=1)
 p.df$lag.fraser_Protection_of_property_rights= lag(p.df$fraser_Protection_of_property_rights, k=1) 
 p.df$lag.fraser_Integrity_of_the_legal_system= lag(p.df$fraser_Integrity_of_the_legal_system, k=1) 
 p.df$lag.fraser_Legal_enforcement_of_contracts= lag(p.df$fraser_Legal_enforcement_of_contracts, k=1) 
+p.df$lag.fraser_Impartial_courts= lag(p.df$fraser_Impartial_courts, k=1) 
+
+
+
 p.df$lag.gcid_index= lag(p.df$gcid_index, k=1) 
 p.df$lag.gcid_index= lag(p.df$gcid_index, k=1) 
 p.df$lag.gfm.Cim1= lag(p.df$gfm.Cim1, k=1) 
@@ -419,6 +423,7 @@ p.df$diff.fraser_econ_fred_sum =  diff(p.df$fraser_econ_fred_sum, k=1)
 p.df$diff.fraser_Protection_of_property_rights=  diff(p.df$fraser_Protection_of_property_rights, k=1)
 p.df$diff.fraser_Integrity_of_the_legal_system=  diff(p.df$fraser_Integrity_of_the_legal_system, k=1)
 p.df$diff.fraser_Legal_enforcement_of_contracts=  diff(p.df$fraser_Legal_enforcement_of_contracts, k=1)
+p.df$diff.fraser_Impartial_courts=  diff(p.df$fraser_Impartial_courts, k=1)
 p.df$diff.gcid_index =  diff(p.df$gcid_index, k=1)
 p.df$diff.gfm.Cim1 = diff(p.df$gfm.Cim1, k=1)
 p.df$diff.gfm.Iiavg1 =  diff(p.df$gfm.Iiavg1, k=1)
@@ -494,13 +499,21 @@ load("../FDI_State_Capacity_Paper/df.RData")
 # Model 1
 options(scipen=9999999)
 model.1 = lm(diff.wdi.ForeignDirect ~ 
+                     # Lagged DV
                      lag.wdi.ForeignDirect +
+                     # Constitutive Terms
+                             # lag.wdi.AgricultureVa +
+                             # lag.wdi.Manufacturing +
+                             # lag.cum.census +
+                     # Interactions
                      lag.wdi.AgricultureVa * lag.cum.census +
                      lag.wdi.Manufacturing * lag.cum.census +
                      # Political Controls
-                     lag.polity + diff.polity +
+                     lag.democracy + diff.democracy +
+                     lag.fraser_Impartial_courts + diff.fraser_Impartial_courts +
                      # Economic Controls
                      lag.wdi.InflationGdp + diff.wdi.InflationGdp + 
+                     lag.gini_disp.mean + diff.gini_disp.mean +
                      lag.wdi.PopulationAges + diff.wdi.PopulationAges +
                      # Demographic Controls
                      lag.wdi.UrbanPopulatio + diff.wdi.UrbanPopulatio + 
@@ -512,4 +525,36 @@ model.1 = lm(diff.wdi.ForeignDirect ~
 # summary(model.1)
 
 
+
+# Pending
+## try wdi.IndustryValue
+## try wdi.HighTechnology
+
+
 ## Computing Conditional Effects
+
+if (!require("pacman")) install.packages("pacman"); library(pacman) 
+p_load(DAMisc) # if it asks compilation for sm package, type "no"
+
+
+# plot 1
+DAintfun2(model.1, c("lag.wdi.AgricultureVa", "lag.cum.census"), rug = T, hist = T, scale.hist=.7,
+          #xlab = c("State Capacity\n(Cumulative Census)", "Democracy\n(Polity)"), 
+          nclass = c(16,20),
+          border=NA#,
+          #ylab = c("Conditional Effect of Democracy", "Conditional Effect of State Capacity")
+          #name.stem = c("cond_eff","cond_eff"), 
+          #plot.type = "pdf"
+)
+
+# plot 2
+DAintfun2(model.1, c("lag.wdi.Manufacturing", "lag.cum.census"), rug = T, hist = T, scale.hist=.7,
+          #xlab = c("State Capacity\n(Cumulative Census)", "Democracy\n(Polity)"), 
+          nclass = c(16,20),
+          border=NA#,
+          #ylab = c("Conditional Effect of Democracy", "Conditional Effect of State Capacity")
+          #name.stem = c("cond_eff","cond_eff"), 
+          #plot.type = "pdf"
+)
+
+## 
